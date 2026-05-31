@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>掌上校园</title>
+  <style>
+    :root {
+      --w: 430px;
+      --blue: #198fe3;
+      --deep-blue: #108ed4;
+      --gray-bg: #f3f4f8;
+      --crumb-bg: #eef5ff;
+      --text: #222;
+      --muted: #8a8a8a;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      background: #fff;
+      color: var(--text);
+      font-family: "PingFang SC", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", "Microsoft YaHei", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    .phone {
+      width: min(100vw, var(--w));
+      min-height: 100vh;
+      margin: 0 auto;
+      background: #fff;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .phone.bg-gray {
+      background: var(--gray-bg);
+    }
+
+    .ios-status {
+      height: 48px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 33px 0 40px;
+      font-weight: 700;
+      color: #050505;
+      letter-spacing: .2px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .ios-time {
+      font-size: 18px;
+      transform: translateY(1px);
+    }
+
+    .ios-left {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .silent {
+      width: 18px;
+      height: 18px;
+      position: relative;
+      display: inline-block;
+      transform: translateY(1px);
+    }
+
+    .silent::before {
+      content: "";
+      position: absolute;
+      left: 7px;
+      top: 1px;
+      width: 6px;
+      height: 15px;
+      border-radius: 2px;
+      background: #111;
+      transform: rotate(-36deg);
+    }
+
+    .silent::after {
+      content: "";
+      position: absolute;
+      left: 1px;
+      top: 8px;
+      width: 20px;
+      height: 3px;
+      border-radius: 2px;
+      background: #111;
+      transform: rotate(45deg);
+    }
+
+    .ios-icons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .signal {
+      width: 25px;
+      height: 16px;
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+    }
+
+    .signal i {
+      display: block;
+      width: 4px;
+      background: #111;
+      border-radius: 2px;
+    }
+
+    .signal i:nth-child(1) { height: 6px; }
+    .signal i:nth-child(2) { height: 10px; }
+    .signal i:nth-child(3) { height: 14px; }
+
+    .battery {
+      width: 31px;
+      height: 17px;
+      border: 2px solid #222;
+      border-radius: 5px;
+      position: relative;
+      padding: 2px;
+    }
+
+    .battery::after {
+      content: "";
+      position: absolute;
+      right: -5px;
+      top: 5px;
+      width: 3px;
+      height: 7px;
+      background: #222;
+      border-radius: 0 2px 2px 0;
+    }
+
+    .battery .level {
+      height: 100%;
+      width: 68%;
+      background: #222;
+      border-radius: 2px;
+    }
+
+    .battery.charging .level {
+      width: 44%;
+      background: #33d25f;
+    }
+
+    .battery.charging::before {
+      content: "⚡";
+      position: absolute;
+      left: 9px;
+      top: -9px;
+      z-index: 3;
+      color: #222;
+      font-size: 21px;
+      font-weight: 900;
+    }
+
+    .nav {
+      height: 59px;
+      background: #fff;
+      display: grid;
+      grid-template-columns: 112px 1fr 78px;
+      align-items: center;
+      position: sticky;
+      top: 48px;
+      z-index: 49;
+      border-bottom: 1px solid rgba(0,0,0,.04);
+    }
+
+    .nav.main {
+      grid-template-columns: 78px 1fr 78px;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
+    .back {
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 43px;
+      line-height: 1;
+      color: #060606;
+      font-weight: 300;
+      cursor: pointer;
+      transform: translateY(-1px);
+    }
+
+    .close {
+      width: 50px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      line-height: 1;
+      color: #060606;
+      font-weight: 300;
+      cursor: pointer;
+      transform: translateY(-1px);
+    }
+
+    .nav-title {
+      text-align: center;
+      font-weight: 700;
+      font-size: 20px;
+      color: #070707;
+      letter-spacing: .5px;
+    }
+
+    .nav-more {
+      text-align: center;
+      font-size: 27px;
+      line-height: 1;
+      letter-spacing: 2px;
+      color: #050505;
+      transform: translateY(-4px);
+      font-weight: 900;
+    }
+
+    .nav-blue-line {
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue) 0 calc(100% - 48px), transparent calc(100% - 48px));
+      position: sticky;
+      top: 107px;
+      z-index: 48;
+    }
+
+    /* 首页 */
+    .home-page {
+      background: #f5f5f5;
+      padding-bottom: 24px;
+      position: relative;
+    }
+
+    .banner {
+      height: 199px;
+      overflow: hidden;
+      background: #ddd;
+      border-bottom: 8px solid #f5f5f5;
+    }
+
+    .banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .profile-row {
+      height: 64px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 17px;
+      border-bottom: 1px solid #eeeeee;
+    }
+
+    .profile-row img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex: none;
+      margin-right: 14px;
+    }
+
+    .profile-name {
+      flex: 1;
+      font-size: 18px;
+      line-height: 1;
+      color: #222;
+      font-weight: 400;
+      transform: translateY(1px);
+    }
+
+    .profile-link {
+      font-size: 18px;
+      color: #999;
+      white-space: nowrap;
+    }
+
+    .section {
+      background: #fff;
+      margin-top: 13px;
+      padding: 18px 17px 27px;
+    }
+
+    .section-head {
+      height: 33px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .blue-mark {
+      width: 4px;
+      height: 22px;
+      border-radius: 2px;
+      background: #2a8de8;
+      flex: none;
+      margin-right: 8px;
+    }
+
+    .section-title {
+      flex: 1;
+      font-size: 20px;
+      font-weight: 500;
+      color: #333;
+      letter-spacing: .3px;
+    }
+
+    .down {
+      width: 30px;
+      height: 30px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .down::before,
+    .down::after {
+      content: "";
+      position: absolute;
+      top: 13px;
+      width: 12px;
+      height: 2px;
+      background: #8a8a8a;
+      border-radius: 2px;
+    }
+
+    .down::before {
+      left: 5px;
+      transform: rotate(45deg);
+    }
+
+    .down::after {
+      right: 5px;
+      transform: rotate(-45deg);
+    }
+
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      row-gap: 31px;
+    }
+
+    .app-item {
+      min-height: 87px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+    }
+
+    .app-icon-wrap {
+      width: 50px;
+      height: 50px;
+      position: relative;
+      margin-bottom: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app-icon {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .app-badge {
+      position: absolute;
+      top: -12px;
+      right: -14px;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 6px;
+      border-radius: 10px;
+      line-height: 20px;
+      text-align: center;
+      background: #ff5b68;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.9);
+    }
+
+    .app-name {
+      max-width: 90px;
+      font-size: 16px;
+      color: #111;
+      line-height: 1.2;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .float-search {
+      position: fixed;
+      left: 50%;
+      bottom: 37px;
+      transform: translateX(calc(min(100vw, var(--w)) / 2 - 52px));
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #fff;
+      z-index: 70;
+      box-shadow: 0 3px 14px rgba(0,0,0,.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .float-search span {
+      width: 25px;
+      height: 25px;
+      border: 3px solid #139bd5;
+      border-radius: 50%;
+      position: relative;
+      display: block;
+    }
+
+    .float-search span::after {
+      content: "";
+      position: absolute;
+      width: 11px;
+      height: 3px;
+      right: -9px;
+      bottom: -5px;
+      background: #139bd5;
+      border-radius: 2px;
+      transform: rotate(45deg);
+    }
+
+    .search-panel {
+      display: none;
+      position: fixed;
+      left: 50%;
+      bottom: 104px;
+      transform: translateX(-50%);
+      width: min(386px, calc(100vw - 44px));
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 6px 24px rgba(0,0,0,.22);
+      padding: 14px;
+      z-index: 80;
+    }
+
+    .search-panel.show {
+      display: block;
+    }
+
+    .search-panel input {
+      width: 100%;
+      height: 42px;
+      border: 1px solid #d9d9d9;
+      border-radius: 9px;
+      padding: 0 12px;
+      font-size: 16px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .search-result {
+      margin-top: 10px;
+      max-height: 220px;
+      overflow: auto;
+    }
+
+    .search-row {
+      padding: 10px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      color: #222;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .search-row small {
+      color: #999;
+      font-size: 14px;
+      margin-left: 5px;
+    }
+
+    .empty-result {
+      color: #999;
+      padding: 12px 4px;
+    }
+
+    .fake-scroll {
+      position: fixed;
+      left: 50%;
+      transform: translateX(calc(min(100vw, var(--w)) / 2 - 7px));
+      width: 3px;
+      border-radius: 3px;
+      background: rgba(0,0,0,.36);
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .home-scroll {
+      top: 111px;
+      height: 455px;
+    }
+
+    /* 请假页通用 */
+    .crumb {
+      height: 52px;
+      background: var(--crumb-bg);
+      display: flex;
+      align-items: center;
+      padding: 0 18px;
+      color: #1e8ee7;
+      font-size: 18px;
+      font-weight: 700;
+      position: sticky;
+      top: 107px;
+      z-index: 47;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .with-line .crumb {
+      top: 109px;
+    }
+
+    .home-pin {
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      margin-right: 6px;
+      position: relative;
+      background: #2a8ff0;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+    }
+
+    .home-pin::after {
+      content: "";
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #eef5ff;
+      left: 5px;
+      top: 5px;
+    }
+
+    .crumb .crumb-home {
+      cursor: pointer;
+      color: #1e8ee7;
+    }
+
+    .chev {
+      width: 14px;
+      height: 14px;
+      margin: 0 10px;
+      border-top: 2px solid #c9d1d9;
+      border-right: 2px solid #c9d1d9;
+      transform: rotate(45deg);
+      flex: none;
+    }
+
+    .crumb-current {
+      color: #1c1c1c;
+      font-weight: 700;
+      font-size: 17px;
+    }
+
+    /* 请假列表 */
+    .leave-list-page {
+      background: #f4f5f9;
+      min-height: calc(100vh - 107px);
+      padding-bottom: 94px;
+    }
+
+    .list-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 36px 17px 19px;
+    }
+
+    .list-title {
+      font-size: 23px;
+      color: #555;
+      font-weight: 700;
+      letter-spacing: .5px;
+    }
+
+    .filter-pill {
+      height: 43px;
+      min-width: 130px;
+      border-radius: 25px;
+      background: #fff;
+      color: #1599d8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-size: 17px;
+      font-weight: 700;
+      box-shadow: 0 1px 10px rgba(0,0,0,.02);
+    }
+
+    .filter-triangle {
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 7px solid #1599d8;
+      margin-top: 3px;
+    }
+
+    .record-card {
+      background: #fff;
+      margin: 0 16px 16px;
+      border-radius: 5px;
+      min-height: 253px;
+      padding: 23px 18px 20px;
+      box-shadow: 0 1px 5px rgba(30,40,70,.05);
+      cursor: pointer;
+    }
+
+    .record-head {
+      height: 37px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .record-title {
+      font-size: 19px;
+      font-weight: 700;
+      color: #202020;
+      white-space: nowrap;
+    }
+
+    .record-time {
+      font-size: 16px;
+      color: #8a8a8a;
+      font-weight: 600;
+      white-space: nowrap;
+      line-height: 1.5;
+    }
+
+    .record-divider {
+      height: 1px;
+      background: #eeeeee;
+      margin: 17px 0 24px;
+    }
+
+    .record-row {
+      font-size: 17px;
+      color: #848484;
+      font-weight: 700;
+      line-height: 34px;
+      letter-spacing: .2px;
+    }
+
+    .record-row b {
+      color: #777;
+      font-weight: 800;
+    }
+
+    .record-status {
+      color: #0f9edc;
+      font-size: 18px;
+      font-weight: 800;
+      margin-top: 14px;
+    }
+
+    .apply-btn {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      width: 238px;
+      height: 56px;
+      border: 0;
+      border-radius: 34px;
+      background: #11addd;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 10px;
+      text-indent: 10px;
+      z-index: 80;
+      box-shadow: 0 3px 8px rgba(0,0,0,.07);
+      font-family: inherit;
+    }
+
+    .list-scroll {
+      top: 682px;
+      height: 258px;
+    }
+
+    /* 请假详情 */
+    .detail-page {
+      background: #f3f4f8;
+      min-height: calc(100vh - 109px);
+      padding-bottom: 44px;
+    }
+
+    .detail-user {
+      height: 114px;
+      background: #fff;
+      position: relative;
+      border-bottom: 12px solid #f3f4f8;
+    }
+
+    .ghost {
+      position: absolute;
+      left: 30px;
+      top: 37px;
+      width: 44px;
+      height: 44px;
+      background: #eff6fb;
+      border-radius: 48% 48% 43% 43%;
+    }
+
+    .ghost::before {
+      content: "";
+      position: absolute;
+      left: 9px;
+      top: -14px;
+      width: 26px;
+      height: 30px;
+      border-radius: 50%;
+      background: #eff6fb;
+    }
+
+    .gender {
+      position: absolute;
+      left: 100px;
+      top: 24px;
+      color: #168fe4;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .blank-name {
+      position: absolute;
+      left: 87px;
+      top: 58px;
+      height: 24px;
+      width: 1px;
+      background: #777;
+    }
+
+    .info-section {
+      position: relative;
+      background: #fff;
+      padding: 21px 17px 31px;
+    }
+
+    .detail-title {
+      display: flex;
+      align-items: center;
+      height: 32px;
+      margin-bottom: 13px;
+    }
+
+    .detail-title .blue-mark {
+      height: 25px;
+      margin-right: 10px;
+    }
+
+    .detail-title-text {
+      font-size: 23px;
+      font-weight: 700;
+      color: #222;
+    }
+
+    .stamp {
+      position: absolute;
+      right: 17px;
+      top: 41px;
+      width: 126px;
+      opacity: .68;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+
+    .info-fields {
+      margin-top: 5px;
+      font-size: 17px;
+      line-height: 34px;
+      font-weight: 700;
+      position: relative;
+      z-index: 1;
+    }
+
+    .info-row {
+      display: flex;
+      min-height: 34px;
+      color: #8a8a8a;
+      letter-spacing: .5px;
+    }
+
+    .label {
+      width: 86px;
+      flex: none;
+      color: #8d8d8d;
+      font-weight: 700;
+    }
+
+    .value {
+      color: #222;
+      font-weight: 700;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .value.blank {
+      color: transparent;
+    }
+
+    .value.blue {
+      color: #129fe1;
+    }
+
+    .section-gap {
+      height: 21px;
+      background: #f3f4f8;
+    }
+
+    .progress-section {
+      background: #fff;
+      padding: 18px 17px 34px;
+      min-height: 337px;
+    }
+
+    .timeline {
+      margin-top: 23px;
+    }
+
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 36px 1fr 128px;
+      column-gap: 12px;
+      position: relative;
+      min-height: 78px;
+      color: #111;
+    }
+
+    .timeline-row:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 11px;
+      top: 25px;
+      width: 1px;
+      height: 62px;
+      background: #268fe1;
+    }
+
+    .circle {
+      width: 22px;
+      height: 22px;
+      border: 2px solid #268fe1;
+      border-radius: 50%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #268fe1;
+      font-size: 17px;
+      line-height: 1;
+      z-index: 2;
+      transform: translateY(2px);
+    }
+
+    .circle.end::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      background: #268fe1;
+      border-radius: 50%;
+    }
+
+    .timeline-title {
+      font-size: 17px;
+      color: #111;
+      font-weight: 700;
+      line-height: 29px;
+    }
+
+    .timeline-title .green {
+      color: #31d77b;
+      margin-left: 10px;
+    }
+
+    .timeline-name {
+      color: #999;
+      font-size: 16px;
+      font-weight: 700;
+      margin-top: 11px;
+    }
+
+    .timeline-date {
+      text-align: right;
+      color: #8c8c8c;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 29px;
+      white-space: nowrap;
+    }
+
+    .detail-scroll {
+      top: 678px;
+      height: 282px;
+    }
+
+
+
+    /* 可点击编辑：默认不加明显样式，保持截图观感 */
+    .editable-row,
+    .timeline-row.editable {
+      cursor: pointer;
+    }
+
+    .editable-row:active .value,
+    .timeline-row.editable:active {
+      opacity: .62;
+    }
+
+    .edit-mask {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: rgba(0,0,0,.38);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .edit-box {
+      width: min(100vw, var(--w));
+      background: #fff;
+      border-radius: 18px 18px 0 0;
+      padding: 18px 18px max(18px, env(safe-area-inset-bottom));
+      box-shadow: 0 -10px 28px rgba(0,0,0,.18);
+      font-family: inherit;
+    }
+
+    .edit-title {
+      font-size: 19px;
+      font-weight: 700;
+      color: #111;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .edit-field {
+      margin-bottom: 12px;
+    }
+
+    .edit-label {
+      display: block;
+      color: #777;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .edit-input,
+    .edit-textarea {
+      width: 100%;
+      border: 1px solid #d8dbe2;
+      border-radius: 10px;
+      outline: none;
+      padding: 10px 12px;
+      color: #222;
+      font-size: 16px;
+      font-family: inherit;
+      background: #fff;
+    }
+
+    .edit-textarea {
+      min-height: 82px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .edit-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .edit-btn {
+      height: 44px;
+      border: 0;
+      border-radius: 22px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+    }
+
+    .edit-cancel {
+      color: #444;
+      background: #f1f2f5;
+    }
+
+    .edit-save {
+      color: #fff;
+      background: #12aee0;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 108px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.78);
+      color: #fff;
+      font-size: 14px;
+      padding: 9px 14px;
+      border-radius: 20px;
+      z-index: 200;
+      opacity: 0;
+      transition: opacity .2s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    @media (max-width: 360px) {
+      .record-title { font-size: 17px; }
+      .record-time { font-size: 14px; }
+      .app-name { font-size: 15px; }
+      .section-title { font-size: 19px; }
+      .float-search {
+        transform: translateX(calc(50vw - 52px));
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const APP = {
+      homeTitle: '掌上校园',
+      leaveTitle: '请假管理',
+      userName: '彭威普',
+      profileUrl: '#'
+    };
+
+    const SECTIONS = [
+      {
+        title: '教学科研',
+        items: [
+          { name: '我的课表', icon: 'calendar', url: '#' },
+          { name: '期末报告', icon: 'report', url: '#' },
+          { name: '移动教务', icon: 'phone', url: '#' },
+          { name: '移动图书馆', icon: 'library', url: '#' },
+          { name: '实验系统', icon: 'lab', url: '#' },
+          { name: '心理系统', icon: 'heart', url: '#' }
+        ]
+      },
+      {
+        title: '办公应用',
+        items: [
+          { name: '通知公示', icon: 'notice', url: '#' },
+          { name: '投票/问卷', icon: 'vote', url: '#' },
+          { name: '学生请假申请', icon: 'leave', route: 'leave-list' },
+          { name: '勤工助学', icon: 'work', url: '#' },
+          { name: '一表通系统', icon: 'form', url: '#' }
+        ]
+      },
+      {
+        title: '数据服务',
+        items: [
+          { name: '我的考试', icon: 'exam', url: '#' },
+          { name: '我的成绩', icon: 'score', url: '#' },
+          { name: '一卡通消费', icon: 'card', url: '#' },
+          { name: '我的科研', icon: 'research', url: '#' }
+        ]
+      },
+      {
+        title: '校园助手',
+        items: [
+          { name: '失物招领', icon: 'lost', url: '#' },
+          { name: '学校班车', icon: 'bus', url: '#' },
+          { name: '校历', icon: 'schoolcal', url: '#' },
+          { name: '发票助手', icon: 'invoice', url: '#' },
+          { name: '维修申请', icon: 'repair', url: '#', badge: '1' }
+        ]
+      }
+    ];
+
+    const DEFAULT_LEAVE_RECORDS = [
+      {
+        id: '20260402',
+        title: '节假日及寒暑假请假',
+        applyTime: '2026-04-02 11:03:36',
+        startTime: '2026-04-03 16:20:00',
+        endTime: '2026-04-06 17:00:00',
+        duration: '天小时分钟',
+        destination: '',
+        address: '',
+        contactName: '',
+        contactPhone: '',
+        reason: '清明假期',
+        status: '审核通过',
+        cancelStatus: '',
+        attachment: '',
+        applicant: '彭威普',
+        checker: '周淑婷',
+        applyShort: '2026-04-02 11:03',
+        checkShort: '2026-04-02 16:56',
+        progress: [
+          { node: '申请', result: '申请', person: '彭威普', time: '2026-04-02 11:03' },
+          { node: '辅导员审核', result: '审核通过', person: '周淑婷', time: '2026-04-02 16:56' },
+          { node: '结束', result: '', person: '', time: '' }
+        ]
+      },
+      {
+        id: '20260327',
+        title: '节假日及寒暑假请假',
+        applyTime: '2026-03-27 09:37:40',
+        startTime: '2026-03-27 17:00:00',
+        endTime: '2026-03-27 22:34:00',
+        duration: '天小时分钟',
+        destination: '',
+        address: '',
+        contactName: '',
+        contactPhone: '',
+        reason: '外出参观',
+        status: '审核通过',
+        cancelStatus: '',
+        attachment: '',
+        applicant: '彭威普',
+        checker: '周淑婷',
+        applyShort: '2026-03-27 09:37',
+        checkShort: '2026-03-27 16:56',
+        progress: [
+          { node: '申请', result: '申请', person: '彭威普', time: '2026-03-27 09:37' },
+          { node: '辅导员审核', result: '审核通过', person: '周淑婷', time: '2026-03-27 16:56' },
+          { node: '结束', result: '', person: '', time: '' }
+        ]
+      },
+      {
+        id: '20260306',
+        title: '节假日及寒暑假请假',
+        applyTime: '2026-03-06 15:30:38',
+        startTime: '2026-03-06 17:00:00',
+        endTime: '2026-03-06 22:00:00',
+        duration: '天小时分钟',
+        destination: '',
+        address: '',
+        contactName: '',
+        contactPhone: '',
+        reason: '外出办事',
+        status: '审核通过',
+        cancelStatus: '',
+        attachment: '',
+        applicant: '彭威普',
+        checker: '周淑婷',
+        applyShort: '2026-03-06 15:30',
+        checkShort: '2026-03-06 16:20',
+        progress: [
+          { node: '申请', result: '申请', person: '彭威普', time: '2026-03-06 15:30' },
+          { node: '辅导员审核', result: '审核通过', person: '周淑婷', time: '2026-03-06 16:20' },
+          { node: '结束', result: '', person: '', time: '' }
+        ]
+      }
+    ];
+
+    const STORAGE_KEY = 'campus_portal_leave_records_v3';
+    let LEAVE_RECORDS = loadRecords();
+
+    function cloneRecords(data) {
+      return JSON.parse(JSON.stringify(data));
+    }
+
+    function loadRecords() {
+      const params = new URLSearchParams(location.search);
+      if (params.get('reset') === '1') localStorage.removeItem(STORAGE_KEY);
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return cloneRecords(DEFAULT_LEAVE_RECORDS);
+        const parsed = JSON.parse(saved);
+        return Array.isArray(parsed) ? parsed : cloneRecords(DEFAULT_LEAVE_RECORDS);
+      } catch (e) {
+        return cloneRecords(DEFAULT_LEAVE_RECORDS);
+      }
+    }
+
+    function saveRecords() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(LEAVE_RECORDS));
+    }
+
+    const $app = document.getElementById('app');
+    const $toast = document.getElementById('toast');
+
+    function normalizeRoute() {
+      const hash = location.hash.replace(/^#\/?/, '');
+      if (!hash) return { name: 'home' };
+      const parts = hash.split('/');
+      if (parts[0] === 'leave-detail') return { name: 'leave-detail', id: parts[1] || '20260327' };
+      if (parts[0] === 'leave-list') return { name: 'leave-list' };
+      return { name: 'home' };
+    }
+
+    function setRoute(name, id) {
+      if (name === 'home') location.hash = '';
+      if (name === 'leave-list') location.hash = 'leave-list';
+      if (name === 'leave-detail') location.hash = 'leave-detail/' + (id || '20260327');
+    }
+
+    function showToast(msg) {
+      $toast.textContent = msg;
+      $toast.classList.add('show');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => $toast.classList.remove('show'), 1500);
+    }
+
+    function escapeHTML(s) {
+      return String(s).replace(/[&<>"']/g, m => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[m]));
+    }
+
+    function iosChrome({ page = 'home', title = APP.homeTitle, time = '14:42', charging = false, blueLine = false }) {
+      const isHome = page === 'home';
+      return `
+        <div class="ios-status">
+          <div class="ios-left">
+            <span class="ios-time">${time}</span>
+            <span class="silent"></span>
+          </div>
+          <div class="ios-icons">
+            <span class="signal"><i></i><i></i><i></i></span>
+            <span>4G</span>
+            <span class="battery ${charging ? 'charging' : ''}"><span class="level"></span></span>
+          </div>
+        </div>
+        <div class="nav ${isHome ? 'main' : ''}">
+          <div class="nav-left">
+            <div class="back" onclick="${isHome ? 'history.back()' : 'navBack()'}">‹</div>
+            ${isHome ? '' : '<div class="close" onclick="setRoute(\'home\')">×</div>'}
+          </div>
+          <div class="nav-title">${title}</div>
+          <div class="nav-more">•••</div>
+        </div>
+        ${blueLine ? '<div class="nav-blue-line"></div>' : ''}
+      `;
+    }
+
+    function iconHTML(item) {
+      return `
+        <div class="app-icon-wrap">
+          <img class="app-icon" src="./assets/icons/${item.icon}.jpg" alt="${escapeHTML(item.name)}">
+          ${item.badge ? `<span class="app-badge">${item.badge}</span>` : ''}
+        </div>
+      `;
+    }
+
+    function renderHome() {
+      const nameParam = new URLSearchParams(location.search).get('name');
+      const userName = nameParam ? decodeURIComponent(nameParam) : APP.userName;
+
+      return `
+        <div class="phone">
+          ${iosChrome({ page: 'home', title: APP.homeTitle, time: '14:42' })}
+          <main class="home-page">
+            <div class="banner"><img src="./assets/banner.jpg" alt="校园图片"></div>
+            <div class="profile-row" onclick="showToast('个人信息为前端静态演示')">
+              <img src="./assets/avatar.jpg" alt="头像">
+              <div class="profile-name">${escapeHTML(userName)}</div>
+              <div class="profile-link">个人信息 ›</div>
+            </div>
+            ${SECTIONS.map((section, si) => `
+              <section class="section">
+                <div class="section-head">
+                  <span class="blue-mark"></span>
+                  <div class="section-title">${section.title}</div>
+                  <div class="down" onclick="toggleSection(this)"></div>
+                </div>
+                <div class="app-grid">
+                  ${section.items.map((item) => `
+                    <div class="app-item" onclick='openApp(${JSON.stringify(item)})'>
+                      ${iconHTML(item)}
+                      <div class="app-name">${item.name}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              </section>
+            `).join('')}
+          </main>
+          <div class="search-panel" id="searchPanel">
+            <input id="searchInput" placeholder="搜索应用，例如：请假、成绩、课表" oninput="renderSearch(this.value)">
+            <div class="search-result" id="searchResult"></div>
+          </div>
+          <div class="float-search" onclick="toggleSearch()"><span></span></div>
+          <div class="fake-scroll home-scroll"></div>
+        </div>
+      `;
+    }
+
+    function renderCrumb(detail = false) {
+      return `
+        <div class="crumb">
+          <span class="home-pin"></span><span class="crumb-home" onclick="setRoute('home')">首页</span>
+          <span class="chev"></span>
+          <span class="crumb-current" onclick="setRoute('leave-list')">请假管理</span>
+          ${detail ? '<span class="chev"></span><span class="crumb-current">请假管理</span>' : ''}
+        </div>
+      `;
+    }
+
+    function renderLeaveList() {
+      return `
+        <div class="phone bg-gray">
+          ${iosChrome({ page: 'leave-list', title: APP.leaveTitle, time: '17:27', charging: true })}
+          ${renderCrumb(false)}
+          <main class="leave-list-page">
+            <div class="list-top">
+              <div class="list-title">申请记录</div>
+              <div class="filter-pill" onclick="showToast('当前为全部状态')">全部状态 <span class="filter-triangle"></span></div>
+            </div>
+            ${LEAVE_RECORDS.map((item) => `
+              <article class="record-card" onclick="setRoute('leave-detail', '${item.id}')">
+                <div class="record-head">
+                  <div class="record-title">${item.title}</div>
+                  <div class="record-time">${item.applyTime}</div>
+                </div>
+                <div class="record-divider"></div>
+                <div class="record-row">开始时间:<b>${item.startTime}</b></div>
+                <div class="record-row">结束时间:<b>${item.endTime}</b></div>
+                <div class="record-row">请假理由：<b>${item.reason}</b></div>
+                <div class="record-status">${item.status}</div>
+              </article>
+            `).join('')}
+          </main>
+          <button class="apply-btn" onclick="showToast('纯前端演示：申请按钮未接入后台')">申请</button>
+          <div class="fake-scroll list-scroll"></div>
+        </div>
+      `;
+    }
+
+    function renderLeaveDetail(id) {
+      const item = getRecord(id);
+      return `
+        <div class="phone bg-gray with-line">
+          ${iosChrome({ page: 'leave-detail', title: APP.leaveTitle, time: '17:28', charging: true, blueLine: true })}
+          ${renderCrumb(true)}
+          <main class="detail-page">
+            <div class="detail-user">
+              <div class="ghost"></div>
+              <div class="gender">♂</div>
+              <div class="blank-name"></div>
+            </div>
+
+            <section class="info-section">
+              <div class="detail-title">
+                <span class="blue-mark"></span>
+                <span class="detail-title-text">请假信息</span>
+              </div>
+              <img src="./assets/stamp-passed.jpg" class="stamp" alt="已通过">
+              <div class="info-fields">
+                ${renderInfoRow(item, 'title', '请假类型：')}
+                ${renderInfoRow(item, 'destination', '请假去向：')}
+                ${renderInfoRow(item, 'address', '详细地址：')}
+                ${renderInfoRow(item, 'startTime', '开始时间：')}
+                ${renderInfoRow(item, 'endTime', '结束时间：')}
+                ${renderInfoRow(item, 'duration', '统计时长：')}
+                ${renderInfoRow(item, 'contactName', '紧急联系人：')}
+                ${renderInfoRow(item, 'contactPhone', '紧急联系人电话：')}
+                ${renderInfoRow(item, 'reason', '请假理由：')}
+                ${renderInfoRow(item, 'status', '请假状态：', 'blue')}
+                ${renderInfoRow(item, 'cancelStatus', '销假状态：')}
+                ${renderInfoRow(item, 'attachment', '请假附件：')}
+              </div>
+            </section>
+
+            <div class="section-gap"></div>
+
+            <section class="progress-section">
+              <div class="detail-title">
+                <span class="blue-mark"></span>
+                <span class="detail-title-text">办理进度</span>
+              </div>
+              <div class="timeline">
+                ${renderProgressRows(item)}
+              </div>
+            </section>
+          </main>
+          <div class="fake-scroll detail-scroll"></div>
+        </div>
+      `;
+    }
+
+    function getRecord(id) {
+      return LEAVE_RECORDS.find(x => x.id === id) || LEAVE_RECORDS[1] || LEAVE_RECORDS[0];
+    }
+
+    function renderInfoRow(item, key, label, extraClass = '') {
+      const val = item[key] == null ? '' : String(item[key]);
+      const valueClass = ['value', extraClass, val.trim() ? '' : 'blank'].filter(Boolean).join(' ');
+      return `
+        <div class="info-row editable-row" onclick="openInfoEditor('${item.id}', '${key}', '${escapeHTML(label.replace('：', ''))}')">
+          <span class="label">${label}</span><span class="${valueClass}">${escapeHTML(val || '无')}</span>
+        </div>
+      `;
+    }
+
+    function renderProgressRows(item) {
+      const rows = item.progress && item.progress.length ? item.progress : [
+        { node: '申请', result: '申请', person: item.applicant || '', time: item.applyShort || '' },
+        { node: '辅导员审核', result: '审核通过', person: item.checker || '', time: item.checkShort || '' },
+        { node: '结束', result: '', person: '', time: '' }
+      ];
+
+      return rows.map((step, index) => {
+        const isEnd = index === rows.length - 1 || step.node === '结束';
+        const icon = isEnd ? '<div class="circle end"></div>' : '<div class="circle">✓</div>';
+        const result = step.result ? `<span class="green">${escapeHTML(step.result)}</span>` : '';
+        const person = step.person ? `<div class="timeline-name">${escapeHTML(step.person)}</div>` : '';
+        const time = step.time ? escapeHTML(step.time) : '';
+        return `
+          <div class="timeline-row editable" onclick="openProgressEditor('${item.id}', ${index})">
+            ${icon}
+            <div>
+              <div class="timeline-title">${escapeHTML(step.node || '')} ${result}</div>
+              ${person}
+            </div>
+            <div class="timeline-date">${time}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openInfoEditor(recordId, key, label) {
+      const item = getRecord(recordId);
+      const isLong = ['reason', 'address', 'attachment'].includes(key);
+      openEditor({
+        title: '修改' + label,
+        fields: [
+          { name: 'value', label, value: item[key] || '', multiline: isLong }
+        ],
+        onSave(values) {
+          item[key] = values.value.trim();
+          if (key === 'status') {
+            item.progress = item.progress || [];
+            if (item.progress[1]) item.progress[1].result = item[key];
+          }
+          if (key === 'title') item.title = item[key];
+          saveRecords();
+          render();
+          showToast('已保存修改');
+        }
+      });
+    }
+
+    function openProgressEditor(recordId, index) {
+      const item = getRecord(recordId);
+      item.progress = item.progress && item.progress.length ? item.progress : [
+        { node: '申请', result: '申请', person: item.applicant || '', time: item.applyShort || '' },
+        { node: '辅导员审核', result: '审核通过', person: item.checker || '', time: item.checkShort || '' },
+        { node: '结束', result: '', person: '', time: '' }
+      ];
+      const step = item.progress[index];
+      openEditor({
+        title: '修改办理进度',
+        fields: [
+          { name: 'node', label: '节点名称', value: step.node || '' },
+          { name: 'result', label: '节点状态', value: step.result || '' },
+          { name: 'person', label: '办理人', value: step.person || '' },
+          { name: 'time', label: '办理时间', value: step.time || '' }
+        ],
+        onSave(values) {
+          step.node = values.node.trim();
+          step.result = values.result.trim();
+          step.person = values.person.trim();
+          step.time = values.time.trim();
+          if (index === 0) {
+            item.applicant = step.person;
+            item.applyShort = step.time;
+          }
+          if (index === 1) {
+            item.checker = step.person;
+            item.checkShort = step.time;
+            if (step.result) item.status = step.result;
+          }
+          saveRecords();
+          render();
+          showToast('已保存修改');
+        }
+      });
+    }
+
+    function openEditor({ title, fields, onSave }) {
+      closeEditor();
+      window.__editorSave = onSave;
+      const mask = document.createElement('div');
+      mask.className = 'edit-mask';
+      mask.id = 'editMask';
+      mask.innerHTML = `
+        <div class="edit-box" onclick="event.stopPropagation()">
+          <div class="edit-title">${escapeHTML(title)}</div>
+          ${fields.map((field, i) => `
+            <label class="edit-field">
+              <span class="edit-label">${escapeHTML(field.label)}</span>
+              ${field.multiline
+                ? `<textarea class="edit-textarea" data-name="${field.name}" autofocus>${escapeHTML(field.value)}</textarea>`
+                : `<input class="edit-input" data-name="${field.name}" value="${escapeHTML(field.value)}" ${i === 0 ? 'autofocus' : ''}>`
+              }
+            </label>
+          `).join('')}
+          <div class="edit-actions">
+            <button class="edit-btn edit-cancel" onclick="closeEditor()">取消</button>
+            <button class="edit-btn edit-save" onclick="saveEditorValues()">保存</button>
+          </div>
+        </div>
+      `;
+      mask.onclick = closeEditor;
+      document.body.appendChild(mask);
+      setTimeout(() => {
+        const first = mask.querySelector('[autofocus]');
+        first && first.focus();
+      }, 60);
+    }
+
+    function saveEditorValues() {
+      const mask = document.getElementById('editMask');
+      if (!mask || !window.__editorSave) return;
+      const values = {};
+      mask.querySelectorAll('[data-name]').forEach(el => values[el.dataset.name] = el.value);
+      const saver = window.__editorSave;
+      closeEditor();
+      saver(values);
+    }
+
+    function closeEditor() {
+      const old = document.getElementById('editMask');
+      if (old) old.remove();
+      window.__editorSave = null;
+    }
+
+    function render() {
+      const route = normalizeRoute();
+      if (route.name === 'leave-list') {
+        $app.innerHTML = renderLeaveList();
+      } else if (route.name === 'leave-detail') {
+        $app.innerHTML = renderLeaveDetail(route.id);
+      } else {
+        $app.innerHTML = renderHome();
+      }
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }
+
+    function navBack() {
+      const route = normalizeRoute();
+      if (route.name === 'leave-detail') setRoute('leave-list');
+      else setRoute('home');
+    }
+
+    function openApp(item) {
+      if (item.route) {
+        setRoute(item.route);
+        return;
+      }
+      if (!item.url || item.url === '#') {
+        showToast('暂未配置跳转地址');
+        return;
+      }
+      location.href = item.url;
+    }
+
+    function toggleSection(el) {
+      const grid = el.closest('.section').querySelector('.app-grid');
+      grid.style.display = grid.style.display === 'none' ? 'grid' : 'none';
+    }
+
+    function toggleSearch() {
+      const panel = document.getElementById('searchPanel');
+      if (!panel) return;
+      panel.classList.toggle('show');
+      if (panel.classList.contains('show')) {
+        setTimeout(() => {
+          const input = document.getElementById('searchInput');
+          input && input.focus();
+          renderSearch('');
+        }, 50);
+      }
+    }
+
+    function renderSearch(keyword) {
+      const target = document.getElementById('searchResult');
+      if (!target) return;
+      const kw = String(keyword || '').trim();
+      const apps = SECTIONS.flatMap(section => section.items.map(item => ({ ...item, section: section.title })));
+      const result = apps.filter(item => !kw || item.name.includes(kw) || item.section.includes(kw));
+      target.innerHTML = result.length
+        ? result.map(item => `<div class="search-row" onclick='openApp(${JSON.stringify(item)})'>${item.name}<small>${item.section}</small></div>`).join('')
+        : '<div class="empty-result">没有找到相关应用</div>';
+    }
+
+    window.addEventListener('hashchange', render);
+    render();
+  </script>
+</body>
+</html>

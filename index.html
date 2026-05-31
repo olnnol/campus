@@ -1067,6 +1067,91 @@
         transform: translateX(calc(50vw - 52px));
       }
     }
+  
+
+    /* 企业微信内嵌版：隐藏自绘顶部栏，避免与企业微信原生栏重叠 */
+    .ios-status,
+    .nav,
+    .nav-blue-line,
+    .home-scroll,
+    .detail-scroll {
+      display: none !important;
+    }
+
+    /* 字体与尺寸按截图重新收紧 */
+    .banner { height: 198px; border-bottom-width: 7px; }
+    .profile-row { height: 64px; padding: 0 16px; }
+    .profile-row img { width: 42px; height: 42px; margin-right: 13px; }
+    .profile-name { font-size: 19px; font-weight: 400; line-height: 1; }
+    .profile-link { font-size: 17px; font-weight: 400; }
+
+    .section { margin-top: 13px; padding: 18px 16px 27px; }
+    .section-head { margin-bottom: 25px; }
+    .blue-mark { width: 4px; height: 22px; margin-right: 8px; }
+    .section-title { font-size: 20px; font-weight: 400; letter-spacing: 0; color: #333; }
+    .app-grid { row-gap: 30px; }
+    .app-item { min-height: 86px; }
+    .app-icon-wrap { width: 50px; height: 50px; margin-bottom: 11px; }
+    .app-icon { width: 48px; height: 48px; }
+    .app-name { font-size: 15px; line-height: 1.24; color: #111; }
+    .app-badge { min-width: 19px; height: 19px; line-height: 19px; font-size: 12px; }
+
+    .crumb { top: 0 !important; height: 54px; padding: 0 17px; font-size: 16px; font-weight: 600; }
+    .with-line .crumb { top: 0 !important; }
+    .crumb-current { font-size: 16px; font-weight: 600; }
+    .home-pin { width: 15px; height: 15px; }
+    .chev { width: 12px; height: 12px; margin: 0 9px; }
+
+    .leave-list-page { min-height: 100vh; padding-bottom: 92px; }
+    .list-top { padding: 38px 16px 18px; }
+    .list-title { font-size: 24px; font-weight: 600; color: #555; letter-spacing: 0; }
+    .filter-pill { height: 44px; min-width: 131px; font-size: 17px; font-weight: 600; gap: 11px; }
+
+    .record-card { margin: 0 16px 16px; border-radius: 4px; min-height: 252px; padding: 24px 18px 21px; }
+    .record-head { height: 36px; }
+    .record-title { font-size: 18px; font-weight: 600; color: #202020; }
+    .record-time { font-size: 14px; font-weight: 600; color: #9a9a9a; line-height: 1.4; }
+    .record-divider { margin: 17px 0 24px; }
+    .record-row { font-size: 16px; line-height: 33px; font-weight: 600; color: #8a8a8a; letter-spacing: 0; }
+    .record-row b { font-weight: 700; color: #777; }
+    .record-status { font-size: 16px; font-weight: 600; }
+    .apply-btn-wrap { bottom: 30px; }
+    .apply-btn { width: 208px; height: 56px; border-radius: 28px; font-size: 18px; font-weight: 600; }
+
+    .user-card { height: 112px; padding: 23px 0 0 16px; }
+    .avatar-blank { width: 39px; height: 54px; }
+    .gender { left: 96px; top: 23px; font-size: 22px; }
+    .blank-name { left: 83px; top: 57px; }
+
+    .info-section { padding: 22px 16px 31px; }
+    .detail-title { height: 31px; margin-bottom: 13px; }
+    .detail-title .blue-mark { height: 24px; margin-right: 9px; }
+    .detail-title-text { font-size: 22px; font-weight: 700; }
+    .stamp { right: 16px; top: 40px; width: 124px; opacity: .64; }
+    .info-fields { margin-top: 4px; font-size: 16px; line-height: 33px; font-weight: 600; }
+    .info-row { min-height: 33px; color: #989898; letter-spacing: 0; }
+    .label { width: 130px; font-size: 16px; color: #9a9a9a; font-weight: 600; }
+    .value { font-size: 16px; color: #222; font-weight: 600; }
+    .value.blue { color: #1699dd; }
+    .section-gap { height: 20px; }
+
+    .progress-section { padding: 19px 16px 34px; min-height: 338px; }
+    .timeline { margin-top: 22px; }
+    .timeline-row { grid-template-columns: 34px 1fr 124px; column-gap: 12px; min-height: 78px; }
+    .timeline-row:not(:last-child)::after { left: 10px; top: 24px; height: 62px; }
+    .circle { width: 21px; height: 21px; font-size: 15px; }
+    .circle.end::before { width: 8px; height: 8px; }
+    .timeline-title { font-size: 16px; line-height: 28px; font-weight: 700; }
+    .timeline-title .green { margin-left: 9px; }
+    .timeline-name { font-size: 14px; font-weight: 600; margin-top: 10px; color: #9a9a9a; }
+    .timeline-date { font-size: 14px; line-height: 28px; font-weight: 600; color: #9a9a9a; }
+
+    .float-search { bottom: 33px; }
+
+    @media (max-width: 430px) {
+      .phone { width: 100vw; }
+    }
+
   </style>
 </head>
 

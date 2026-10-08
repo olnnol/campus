@@ -954,6 +954,19 @@
       opacity: .62;
     }
 
+    /* 右上角空白处的隐藏热区：吃掉面包屑右侧剩余空白，无可见按钮、无按下反馈，
+       点一下进入 / 退出「编辑模式」（整页可编辑项统一在此解锁）。flex:1 让它永远
+       从文字末尾延伸到最右侧，不会在任何屏宽下压到面包屑文字；负外边距补掉
+       面包屑的 17px 右内边距，让最外侧的角落也能点到。 */
+    .unlock-hotspot {
+      flex: 1;
+      align-self: stretch;
+      margin-right: -17px;
+      background: transparent;
+      cursor: default;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     .edit-mask {
       position: fixed;
       inset: 0;
@@ -1387,19 +1400,26 @@
         (withSeconds ? ':' + pad2(d.getSeconds()) : '');
     }
 
+    // 秒数不跟随当前时间，固定为 00
+    function fmtDateTimeZeroSec(d) {
+      return fmtDateTime(d, false) + ':00';
+    }
+
     // 每次进入请假详情时，按当前时间重置演示数据：
-    // 申请时间 = 1 小时前，辅导员审核 = 申请时间 + 14 分钟，
-    // 请假开始 = 当前时间，结束 = 当前时间 + 2 小时，请假理由 = 外出办事
+    // 申请时间 = 2 小时前，辅导员审核 = 申请时间 + 14 分钟（早于请假开始），
+    // 请假开始 = 当前时间的前 1 小时，结束 = 当前时间的后 2 小时（秒数固定 00），
+    // 请假理由 = 外出办事
     function autoRefreshDemo(item) {
       const now = new Date();
-      const applyAt = new Date(now.getTime() - 60 * 60 * 1000);
+      const applyAt = new Date(now.getTime() - 2 * 60 * 60 * 1000);
       const checkAt = new Date(applyAt.getTime() + 14 * 60 * 1000);
-      const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+      const startAt = new Date(now.getTime() - 60 * 60 * 1000);
+      const endAt = new Date(now.getTime() + 2 * 60 * 60 * 1000);
       item.applyTime = fmtDateTime(applyAt, true);
       item.applyShort = fmtDateTime(applyAt, false);
       item.checkShort = fmtDateTime(checkAt, false);
-      item.startTime = fmtDateTime(now, true);
-      item.endTime = fmtDateTime(twoHoursLater, true);
+      item.startTime = fmtDateTimeZeroSec(startAt);
+      item.endTime = fmtDateTimeZeroSec(endAt);
       item.reason = '外出办事';
       if (item.progress && item.progress.length) {
         if (item.progress[0]) item.progress[0].time = item.applyShort;
@@ -1515,6 +1535,7 @@
           <span class="chev"></span>
           <span class="crumb-current" onclick="setRoute('leave-list')">请假管理</span>
           ${detail ? '<span class="chev"></span><span class="crumb-current">请假管理</span>' : ''}
+          ${detail ? '<div class="unlock-hotspot" onclick="toggleEditMode()"></div>' : ''}
         </div>
       `;
     }
@@ -1605,11 +1626,43 @@
       return LEAVE_RECORDS.find(x => x.id === id) || LEAVE_RECORDS[1] || LEAVE_RECORDS[0];
     }
 
+    // 隐藏开关保护整页可编辑项：未进入模式时，点任何一项都没有反应。
+    // 内存态，同一会话内跨页面保持；刷新页面后重新锁定。
+    let editMode = false;
+
+    function toggleEditMode() {
+      editMode = !editMode;
+      applyEditMode();
+      showToast(editMode ? '已进入编辑模式' : '已退出编辑模式');
+    }
+
+    // 生成"解锁后才生效"的编辑属性：data-edit-class 是解锁时要加的类名，
+    // data-edit-call 是解锁时要挂的 onclick —— 锁定时页面上根本不存在 onclick 属性。
+    function editAttrs(cls, call) {
+      return ` data-edit-class="${cls}" data-edit-call="${escapeHTML(call)}"`;
+    }
+
+    // 原地切换可点击状态，不整页重渲染，避免滚动位置被重置到顶部
+    function applyEditMode() {
+      document.querySelectorAll('[data-edit-call]').forEach((el) => {
+        const cls = el.dataset.editClass;
+        if (editMode) {
+          if (cls) el.classList.add(cls);
+          el.setAttribute('onclick', el.dataset.editCall);
+        } else {
+          if (cls) el.classList.remove(cls);
+          el.removeAttribute('onclick');
+        }
+      });
+    }
+
     function renderInfoRow(item, key, label, extraClass = '') {
       const val = item[key] == null ? '' : String(item[key]);
       const valueClass = ['value', extraClass, val.trim() ? '' : 'blank'].filter(Boolean).join(' ');
+      const shortLabel = escapeHTML(label.replace('：', ''));
+      const editCall = `openInfoEditor('${item.id}', '${key}', '${shortLabel}')`;
       return `
-        <div class="info-row editable-row" onclick="openInfoEditor('${item.id}', '${key}', '${escapeHTML(label.replace('：', ''))}')">
+        <div class="info-row${editMode ? ' editable-row' : ''}"${editAttrs('editable-row', editCall)}>
           <span class="label">${label}</span><span class="${valueClass}">${escapeHTML(val || '无')}</span>
         </div>
       `;
@@ -1629,7 +1682,7 @@
         const person = step.person ? `<div class="timeline-name">${escapeHTML(step.person)}</div>` : '';
         const time = step.time ? escapeHTML(step.time) : '';
         return `
-          <div class="timeline-row editable" onclick="openProgressEditor('${item.id}', ${index})">
+          <div class="timeline-row${editMode ? ' editable' : ''}"${editAttrs('editable', `openProgressEditor('${item.id}', ${index})`)}>
             ${icon}
             <div>
               <div class="timeline-title">${escapeHTML(step.node || '')} ${result}</div>
